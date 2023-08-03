@@ -18,20 +18,24 @@ function Footer() {
       <MainContainer>
         <LeftContainer>
           <LogoContainer>
-            <Logo src={ImageLogo} />
+            <Logo src={ImageLogo} alt="Logo da Marca Praiana" />
           </LogoContainer>
-          <div>© PRAIANA - Todos os direitos reservados.</div>
+          <div>
+            <p>© PRAIANA - Todos os direitos reservados.</p>
+          </div>
         </LeftContainer>
         <RightContainer>
-          <div>Siga:</div>
+          <div>
+            <p>Siga:</p>
+          </div>
           <a href="https://github.com/gabriellivalelia">
-          <Icon  src={WhatsAppLogo}/>
+            <Icon alt="Logo do WhatsApp Clicável" src={WhatsAppLogo} />
           </a>
           <a href="https://github.com/gabriellivalelia">
-          <Icon  src={InstagramLogo}/>
+            <Icon alt="Logo do Instagram Clicável" src={InstagramLogo} />
           </a>
           <a href="https://github.com/gabriellivalelia">
-          <Icon  src={TwitterLogo}/>
+            <Icon alt="Logo do Twitter Clicável" src={TwitterLogo} />
           </a>
         </RightContainer>
       </MainContainer>
