@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
 import {
   Container,
   ImageContainer,
@@ -8,22 +7,68 @@ import {
   ButtonContainer,
   Image,
   Button,
+  DropDownContainer
 } from "./styles";
 import Logo from "../../assets/logo.svg";
+import Dropdown from "antd/es/dropdown/dropdown";
+import { MenuOutlined } from "@ant-design/icons";
 
 function Header() {
+
+  const OnLine = false;
+
+  const items = [
+    {
+      key: "1",
+      label: <Link to="/">Home</Link>,
+    },
+    {
+      key: "2",
+      label: <Link to="/Vitrine">Vitrine</Link>,
+    },
+    {
+      key: "3",
+      label: <Link to="/Perfil">Meu Perfil</Link>,
+    },
+    OnLine && (
+    {
+      key: "4",
+      label: <Link to="/Login">Login</Link>,
+    }),
+    OnLine && (
+    {
+      key: "5",
+      label: <Link to="/Cadastro">Cadastre-se</Link>,
+    }),
+  ];
+
+
+
   return (
     <React.StrictMode>
       <Container>
         <ImageContainer>
           <Image src={Logo} />
         </ImageContainer>
-        <NavBar>
+        <NavBar OnLine = {OnLine}>
           <Link to="/">Home</Link>
           <Link to="/Vitrine">Vitrine</Link>
           <Link to="/Perfil">Meu Perfil</Link>
         </NavBar>
-        <ButtonContainer>
+        <DropDownContainer>
+        <Dropdown
+          menu={{
+            items,
+          }}
+          placement="bottom"
+        >
+          <MenuOutlined style={{
+            fontSize: "20px",
+            color: "white"
+          }} />
+        </Dropdown>
+        </DropDownContainer>
+        <ButtonContainer OnLine = {OnLine}>
           <Button Background="white" Color=" #64C9CF" Border=" #64C9CF">
             Login
           </Button>

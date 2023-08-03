@@ -1,11 +1,40 @@
 import React from "react";
-
-// import { Container } from './styles';
+import {
+  MainContainer,
+  LeftContainer,
+  RightContainer,
+  Icon,
+  LogoContainer,
+  Logo,
+} from "./styles";
+import ImageLogo from "../../assets/logo.svg";
+import TwitterLogo from "../../assets/twitter.svg";
+import WhatsAppLogo from "../../assets/whatsApp.svg";
+import InstagramLogo from "../../assets/instagram.svg";
 
 function Footer() {
   return (
     <React.StrictMode>
-      <h1>Footer</h1>
+      <MainContainer>
+        <LeftContainer>
+          <LogoContainer>
+            <Logo src={ImageLogo} />
+          </LogoContainer>
+          <div>© PRAIANA - Todos os direitos reservados.</div>
+        </LeftContainer>
+        <RightContainer>
+          <div>Siga:</div>
+          <a href="https://github.com/gabriellivalelia">
+          <Icon  src={WhatsAppLogo}/>
+          </a>
+          <a href="https://github.com/gabriellivalelia">
+          <Icon  src={InstagramLogo}/>
+          </a>
+          <a href="https://github.com/gabriellivalelia">
+          <Icon  src={TwitterLogo}/>
+          </a>
+        </RightContainer>
+      </MainContainer>
     </React.StrictMode>
   );
 }
