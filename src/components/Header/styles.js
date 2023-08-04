@@ -73,7 +73,7 @@ export const Button = styled.button`
     border-radius: 5px;
     font-family: Montserrat;
     background: ${props => props.Background};
-    border: ${props => props.Border};
+    border: 1px solid  ${props => props.Border};
     color: ${props => props.Color};
 `;
 
