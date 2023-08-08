@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const InternalContainer = styled.div`
-   width: 60%;
+   width: 65%;
    height: auto;
    min-height: 90%;
    padding: 2%;

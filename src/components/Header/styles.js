@@ -47,6 +47,14 @@ export const NavBar = styled.div`
    @media(max-width:620px){
       display: none;
    }
+
+   
+`;
+
+export const Hover = styled.div`
+   &:hover{
+      font-weight: bold;
+   }
 `;
 
 export const ButtonContainer = styled.div`
@@ -64,17 +72,24 @@ export const ButtonContainer = styled.div`
       display: none;
    }
 
+   
+
 `;
 
 export const Button = styled.button`
     width: 30%;
-    min-width: 80px;
+    min-width: 100px;
     height: 32px;
-    border-radius: 5px;
+    border-radius: 0.625rem;
     font-family: Montserrat;
     background: ${props => props.Background};
     border: 1px solid  ${props => props.Border};
     color: ${props => props.Color};
+
+    &:hover {
+    background-color: #64C9CF;
+    color:white;
+   }
 `;
 
 export const DropDownContainer = styled.div`

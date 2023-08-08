@@ -9,4 +9,6 @@ body{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
   }
