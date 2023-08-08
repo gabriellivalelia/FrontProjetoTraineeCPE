@@ -20,12 +20,14 @@ import {
 
 import { Products } from "../Vitrine/products";
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 function Perfil() {
   const [Filled, SetFilled] = useState(false);
   const [SelectedProduct, SetSelectedProduct] = useState("0");
   const [ShowProducts, SetShowProducts] = useState(true);
   const [ShowData, SetShowData] = useState(false);
+  const Navigate = useNavigate();
 
   function Favorite(id) {
     SetFilled(!Filled);
@@ -148,6 +150,7 @@ function Perfil() {
                     Background="#FFADC1FA"
                     Color="white"
                     BorderColor="#FFADC1FA"
+                    onClick={()=> Navigate("/EditarPerfil")}
                   >
                     Editar Dados
                   </Button>

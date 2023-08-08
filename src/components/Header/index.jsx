@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Container,
   ImageContainer,
@@ -17,6 +17,7 @@ import { MenuOutlined } from "@ant-design/icons";
 function Header() {
 
   const OnLine = false;
+  const Navigate = useNavigate();
 
   const items = [
     {
@@ -43,7 +44,7 @@ function Header() {
     }),
   ];
 
-
+  
 
   return (
     <React.StrictMode>
@@ -70,12 +71,12 @@ function Header() {
         </Dropdown>
         </DropDownContainer>
         <ButtonContainer OnLine = {OnLine}>
-          <Button Background="white" Color=" #64C9CF" Border=" #64C9CF">
+          <Button Background="white" Color=" #64C9CF" Border=" #64C9CF" onClick={()=> Navigate("/Login")}>
             Login
           </Button>
-          <Button Background="#FFADC1FA" Color="white" Border="#FFADC1FA">
+          <Button Background="#FFADC1FA" Color="white" Border="#FFADC1FA" onClick={()=> Navigate("/Cadastro")}>
             Cadastre-se
-          </Button>
+          </Button >
         </ButtonContainer>
       </Container>
     </React.StrictMode>
