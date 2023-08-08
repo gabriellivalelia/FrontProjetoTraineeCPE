@@ -98,7 +98,7 @@ function Perfil() {
                         <Text Weight="600" Size="12px">
                           R${Product.price}
                         </Text>
-                        <Button onClick={() => Favorite(Product.id)}>
+                        <Button Hover = "#FDE49C" onClick={() => Favorite(Product.id)}>
                           {Filled && SelectedProduct === Product.id ? (
                             <HeartFilled />
                           ) : (

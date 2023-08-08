@@ -65,7 +65,7 @@ export const Button = styled.button`
    border-radius:${props => props.Radius || "0.625rem"};
    
    &:hover {
-    background-color: #64C9CF;
+    background-color: ${props => props.Hover || "#64C9CF"};
    }
 `;
 export const RightContainer = styled.div`
