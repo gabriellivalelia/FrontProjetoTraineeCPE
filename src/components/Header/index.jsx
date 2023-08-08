@@ -7,7 +7,8 @@ import {
   ButtonContainer,
   Image,
   Button,
-  DropDownContainer
+  DropDownContainer,
+  Hover
 } from "./styles";
 import Logo from "../../assets/logo.svg";
 import Dropdown from "antd/es/dropdown/dropdown";
@@ -51,9 +52,9 @@ function Header() {
           <Image src={Logo} />
         </ImageContainer>
         <NavBar OnLine = {OnLine}>
-          <Link to="/">Home</Link>
-          <Link to="/Vitrine">Vitrine</Link>
-          <Link to="/Perfil">Meu Perfil</Link>
+          <Link to="/"><Hover>Home</Hover></Link>
+          <Link to="/Vitrine"><Hover>Vitrine</Hover></Link>
+          <Link to="/Perfil"><Hover>Meu Perfil</Hover></Link>
         </NavBar>
         <DropDownContainer>
         <Dropdown

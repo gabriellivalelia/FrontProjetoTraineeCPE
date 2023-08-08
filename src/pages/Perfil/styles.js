@@ -2,9 +2,14 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   padding: 2%;
-
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  
   display: flex;
   flex-direction: row;
+  box-sizing: border-box;
+  
 
   @media(max-width: 900px){
     flex-direction: column;
@@ -14,7 +19,7 @@ export const Container = styled.div`
 export const ButtonsContainer = styled.div`
   width: 30%;
   padding: 2%;
-
+  
   @media(max-width: 900px){
     width:100%;
     box-sizing: border-box;
@@ -50,13 +55,18 @@ export const Text = styled.div`
 `;
 
 export const Button = styled.button`
-   width: 100%;
+   width:${props => props.Width || "100%"};
+   min-width: 100px;
    height: 32px;
    background: ${props => props.Background || "#FDE49C"};
    color:${props => props.Color || "#64C9CF" };
-   border: ${props => props.Border || "1px"} solid #64C9CF;
+   border: ${props => props.Border || "1px"} solid ;
+   border-color: ${props => props.BorderColor || "#64C9CF"};
    border-radius:${props => props.Radius || "0.625rem"};
    
+   &:hover {
+    background-color: #64C9CF;
+   }
 `;
 export const RightContainer = styled.div`
    width: 70%;
@@ -64,6 +74,7 @@ export const RightContainer = styled.div`
 
    display: flex;
    flex-direction: column;
+   
 
    @media(max-width: 900px){
     width:100%;
@@ -73,7 +84,6 @@ export const RightContainer = styled.div`
 
 export const ProductsContainer = styled.div`
   padding: 3%;
-
   display: grid;
   grid-template-columns: 1fr 1fr 1fr  ;
   align-items: center;
@@ -124,6 +134,51 @@ export const InternalContainer = styled.div`
 
    display: flex;
    flex-direction: column;
+`;
+
+export const DataContainer = styled.div`
+   width: 95%;
+   height: auto;
+   padding: 2%;
+   border-radius: 0.625rem;
+   border: 4px solid #FFF;
+   background: rgba(255, 255, 255, 0.35);
+   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.05);
+   
+
+   display:flex;
+   flex-direction:column;
+   justify-content: space-between; 
+
+
+
+`;
+
+
+export const DataInternalContainer = styled.div`
+   height: 70%;
+   gap:1em;
+
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+`;
+
+export const DataBox = styled.div`
+   height: 25%;
+`;
+
+export const DataInternalBox = styled.div`
+  
+`;
+
+export const ButtonBox = styled.div`
+   display: flex;
+   flex-direction: row;
+   justify-content: flex-end;
+   gap: 5%;
+
+   padding-top: 5%;
 `;
 
 
