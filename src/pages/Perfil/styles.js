@@ -125,6 +125,7 @@ export const ProductCard = styled.div`
 export const Image = styled.img`
    width: 10.125rem;
    height: 11rem;
+   object-fit: cover;
 `;
 
 export const InternalContainer = styled.div`
