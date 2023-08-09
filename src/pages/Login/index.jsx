@@ -56,6 +56,7 @@ function Login() {
               <Input
                 type="email"
                 id="email"
+                placeholder="Email"
                 {...register("email")}
                 autoComplete="off"
               />
@@ -66,6 +67,7 @@ function Login() {
               <Input
                 type="password"
                 id="senha"
+                placeholder="Senha"
                 {...register("senha")}
                 autoComplete="off"
               />
