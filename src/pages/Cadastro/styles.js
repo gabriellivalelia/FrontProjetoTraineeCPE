@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import InputMask from 'react-input-mask';
 
 export const Container = styled.div`
   flex:1;
@@ -77,6 +78,15 @@ export const Message = styled.div`
    width: 100%;
    color: red;
    font-size: 12px;
+`;
+
+export const StyledPhoneInput = styled(InputMask)`
+   width: 100%;
+   height: 32px;
+   padding: 2%;
+   box-sizing: border-box;
+   border-radius: 0.25rem;
+   border: none;
 `;
 
 

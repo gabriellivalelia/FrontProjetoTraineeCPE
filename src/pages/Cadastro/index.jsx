@@ -8,6 +8,7 @@ import {
   InputContainer,
   Button,
   Message,
+  StyledPhoneInput
 } from "./styles";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -79,27 +80,27 @@ function Cadastro() {
           <Form onSubmit={handleSubmit(createUser)}>
             <InputContainer>
               <label htmlFor="nome">Nome Completo:</label>
-              <Input type="text" id="nome" {...register("nome")} autoComplete="off"/>
+              <Input type="text" id="nome" {...register("nome")} autoComplete="off" placeholder="Nome Completo"/>
               {errors.nome && <Message>{errors.nome.message}</Message>}
             </InputContainer>
             <InputContainer>
               <label htmlFor="email">Email:</label>
-              <Input type="email" id="email" {...register("email")} autoComplete="off"/>
+              <Input type="email" id="email" {...register("email")} autoComplete="off" placeholder="Email"/>
               {errors.email && <Message>{errors.email.message}</Message>}
             </InputContainer>
             <InputContainer>
               <label htmlFor="telefone">Telefone:</label>
-              <Input type="text" id="telefone" {...register("telefone")} autoComplete="off"/>
+              <StyledPhoneInput type="text" id="telefone" mask="(99) 99999-9999" {...register("telefone")} autoComplete="off" placeholder="Telefone"/>
               {errors.telefone && <Message>{errors.telefone.message}</Message>}
             </InputContainer>
             <InputContainer>
               <label htmlFor="endereço">Endereço:</label>
-              <Input type="text" id="endereço" {...register("endereço")} autoComplete="off"/>
+              <Input type="text" id="endereço" {...register("endereço")} autoComplete="off" placeholder="Endereço"/>
               {errors.endereço && <Message>{errors.endereço.message}</Message>}
             </InputContainer>
             <InputContainer>
               <label htmlFor="senha">Senha:</label>
-              <Input type="password" id="senha" {...register("senha")} autoComplete="off"/>
+              <Input type="password" id="senha" {...register("senha")} autoComplete="off" placeholder="Senha"/>
               {errors.senha && <Message>{errors.senha.message}</Message>}
             </InputContainer>
             <InputContainer>
@@ -108,6 +109,7 @@ function Cadastro() {
                 type="password"
                 id="senhaConfirmada"
                 autoComplete="off"
+                placeholder="Confirme Sua Senha"
                 {...register("senhaConfirmada")}
               />
               {errors.senhaConfirmada && (
