@@ -1,5 +1,5 @@
 import React from "react";
-
+import { useNavigate } from "react-router-dom";
 import {
   Container,
   FormContainer,
@@ -62,8 +62,11 @@ function Cadastro() {
     resolver: zodResolver(CreateUserFormSchema),
   });
 
+  const Navigate = useNavigate();
+
   function createUser(data) {
     console.log(data);
+    Navigate("/");
   }
 
   return (
