@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Container,
   ButtonsContainer,
@@ -21,27 +21,40 @@ import {
 import { Products } from "../Vitrine/products";
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import * as requesterService from "../../services/Requester/requesterService";
 
 function Perfil() {
-  const [Filled, SetFilled] = useState(false);
-  const [SelectedProduct, SetSelectedProduct] = useState("0");
-  const [ShowProducts, SetShowProducts] = useState(true);
-  const [ShowData, SetShowData] = useState(false);
-  const Navigate = useNavigate();
+  const [filled, setFilled] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState("0");
+  const [showProducts, setShowProducts] = useState(true);
+  const [showData, setShowData] = useState(false);
+  const navigate = useNavigate();
 
-  function Favorite(id) {
-    SetFilled(!Filled);
-    SetSelectedProduct(id);
+  const userId = "efa348fb-ac4c-4dd0-b018-7ecab2178de7";
+  let [user, setUser] = useState({});
+
+  async function getUserData() {
+    const res = await requesterService.getUserById(userId);
+    setUser(res.data);
   }
 
-  function SelectFavoritePage() {
-    SetShowProducts(true);
-    SetShowData(false);
+  useEffect(() => {
+    getUserData();
+  }, []);
+
+  function favorite(id) {
+    setFilled(!filled);
+    setSelectedProduct(id);
   }
 
-  function SelectDataPage() {
-    SetShowProducts(false);
-    SetShowData(true);
+  function selectFavoritePage() {
+    setShowProducts(true);
+    setShowData(false);
+  }
+
+  function selectDataPage() {
+    setShowProducts(false);
+    setShowData(true);
   }
 
   return (
@@ -57,16 +70,16 @@ function Perfil() {
               Background="rgba(100, 201, 207, 0.25);"
               Border="0"
               Color="#11223D"
-              onClick={SelectFavoritePage}
+              onClick={selectFavoritePage}
             >
               Favoritos
             </Button>
-            <Button 
-            Radius="0"
-            Background="white"
-            Border="0" 
-            Color="#11223D"
-            onClick={SelectDataPage}
+            <Button
+              Radius="0"
+              Background="white"
+              Border="0"
+              Color="#11223D"
+              onClick={selectDataPage}
             >
               Detalhes do Perfil
             </Button>
@@ -81,7 +94,7 @@ function Perfil() {
           </ButtonsBox>
         </ButtonsContainer>
         <RightContainer>
-          {ShowProducts && (
+          {showProducts && (
             <>
               <Text Color="#11223D">
                 <h1>Favoritos</h1>
@@ -98,8 +111,11 @@ function Perfil() {
                         <Text Weight="600" Size="12px">
                           R${Product.price}
                         </Text>
-                        <Button Hover = "#FDE49C" onClick={() => Favorite(Product.id)}>
-                          {Filled && SelectedProduct === Product.id ? (
+                        <Button
+                          Hover="#FDE49C"
+                          onClick={() => favorite(Product.id)}
+                        >
+                          {filled && selectedProduct === Product.id ? (
                             <HeartFilled />
                           ) : (
                             <HeartOutlined />
@@ -112,7 +128,7 @@ function Perfil() {
               </ProductsContainer>
             </>
           )}
-          {ShowData && (
+          {showData && (
             <>
               <Text Color="#11223D">
                 <h1>Detalhes do Perfil</h1>
@@ -121,19 +137,19 @@ function Perfil() {
                 <DataInternalContainer>
                   <DataInternalBox>
                     <Text Weight="bold">Nome Completo:</Text>
-                    <Text>Gabrielli Valelia Sousa da Silva</Text>
+                    <Text>{user?.name || ""}</Text>
                   </DataInternalBox>
                   <DataInternalBox>
                     <Text Weight="bold">Email:</Text>
-                    <Text>gabriellisilva1102@gmail.com</Text>
+                    <Text>{user?.email || ""}</Text>
                   </DataInternalBox>
                   <DataInternalBox>
                     <Text Weight="bold">Telefone:</Text>
-                    <Text>(28) 99934-8537</Text>
+                    <Text>{user?.phone || ""}</Text>
                   </DataInternalBox>
                   <DataInternalBox>
                     <Text Weight="bold">Endereço:</Text>
-                    <Text>Rua Zilah Corrêa de Araújo, 345</Text>
+                    <Text>{user?.address || ""}</Text>
                   </DataInternalBox>
                 </DataInternalContainer>
                 <ButtonBox>
@@ -150,7 +166,7 @@ function Perfil() {
                     Background="#FFADC1FA"
                     Color="white"
                     BorderColor="#FFADC1FA"
-                    onClick={()=> Navigate("/EditarPerfil")}
+                    onClick={() => navigate("/EditarPerfil")}
                   >
                     Editar Dados
                   </Button>

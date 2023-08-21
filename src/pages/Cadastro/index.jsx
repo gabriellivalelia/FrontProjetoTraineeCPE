@@ -14,6 +14,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as requesterService from "../../services/Requester/requesterService";
+//import { LoadingOutlined } from "@ant-design/icons";
+//import { useState } from "react";
 
 function Cadastro() {
   const CreateUserFormSchema = z
@@ -66,20 +68,22 @@ function Cadastro() {
     resolver: zodResolver(CreateUserFormSchema),
   });
 
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
+
+  //const [loading, setLoading] = useState(true);
 
   async function createUser(userData) {
-    
-     console.log({userData})
+    console.log({ userData });
+   // setLoading(true);
 
     try {
       const { data } = await requesterService.createUser(userData);
-      console.log({data});
+      navigate("/");
+      console.log({ data });
     } catch (error) {
       console.error(error);
+     // setLoading(false);
     }
-
-    Navigate("/");
   }
 
   return (
@@ -159,7 +163,12 @@ function Cadastro() {
                 <Message>{errors.confirmedPassword.message}</Message>
               )}
             </InputContainer>
-            <Button type="submit" value="Finalizar Cadastro" />
+            {/* {loading ? (
+              <LoadingOutlined spin />
+            ) : (
+              <Button type="submit" value="Finalizar Cadastro" />
+            )} */}
+             <Button type="submit" value="Finalizar Cadastro"/>
           </Form>
         </FormContainer>
       </Container>
