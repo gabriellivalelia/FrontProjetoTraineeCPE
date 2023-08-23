@@ -8,24 +8,60 @@ import {
   Button,
   ProductBox,
 } from "./styles";
-import { Products } from "./products";
+
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import * as requesterService from "../../services/Requester/requesterService";
 
 function Vitrine() {
-  const [Filled, SetFilled] = useState(false);
-  const [SelectedProduct, SetSelectedProduct] = useState("0");
+  const [products, setProducts] = useState([]);
+  const [idsOfFavoriteProducts, setIdOfFavoriteProducts] = useState([]);
 
-  function Favorite(id) {
-    SetFilled(!Filled);
-    SetSelectedProduct(id);
+  const userId = "3955b535-a8cf-4ebe-ae70-d7f618695009";
+
+  async function favorite(id) {
+    if (idsOfFavoriteProducts.includes(id)) {
+      const idToDelete =
+        await requesterService.getIdFavoriteProductByProductIdAndUserId(
+          id,
+          userId
+        );
+
+      await requesterService.deleteFavortiteProduct(idToDelete.data);
+    } else {
+      const favoriteProduct = {
+        userId: userId,
+        productId: id,
+      };
+      await requesterService.createFavoriteProduct(favoriteProduct);
+    }
+
+    getProducts();
+    getProductIdsOfFavoriteProductsByUserId();
   }
 
+  async function getProducts() {
+    const res = await requesterService.getProducts();
+    setProducts(res.data);
+  }
+
+  async function getProductIdsOfFavoriteProductsByUserId() {
+    const res = await requesterService.getProductIdsOfFavoriteProductsByUserId(
+      userId
+    );
+    setIdOfFavoriteProducts(res.data);
+    console.log(res.data);
+  }
+
+  useEffect(() => {
+    getProducts();
+    getProductIdsOfFavoriteProductsByUserId();
+  }, []);
 
   return (
     <React.StrictMode>
       <Container>
-        {Products.map((Product) => (
+        {products.map((Product) => (
           <ProductBox key={Product.id}>
             <ProductCard>
               <Image src={Product.src} />
@@ -36,8 +72,8 @@ function Vitrine() {
                 <Text Weight="600" Size="12px">
                   R${Product.price}
                 </Text>
-                <Button onClick={()=>Favorite(Product.id)}>
-                  {Filled && SelectedProduct === Product.id ? (
+                <Button onClick={() => favorite(Product.id)}>
+                  {idsOfFavoriteProducts.includes(Product.id) ? (
                     <HeartFilled />
                   ) : (
                     <HeartOutlined />
