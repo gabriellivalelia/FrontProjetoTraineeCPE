@@ -18,19 +18,18 @@ import {
   ButtonBox,
 } from "./styles";
 
-import { Products } from "../Vitrine/products";
-import { HeartOutlined, HeartFilled } from "@ant-design/icons";
+import { HeartFilled } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import * as requesterService from "../../services/Requester/requesterService";
 
 function Perfil() {
-  const [filled, setFilled] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState("0");
+  const [products, setProducts] = useState([]);
+  const [idsOfFavoriteProducts, setIdOfFavoriteProducts] = useState([]);
   const [showProducts, setShowProducts] = useState(true);
   const [showData, setShowData] = useState(false);
   const navigate = useNavigate();
 
-  const userId = "efa348fb-ac4c-4dd0-b018-7ecab2178de7";
+  const userId = "3955b535-a8cf-4ebe-ae70-d7f618695009";
   let [user, setUser] = useState({});
 
   async function getUserData() {
@@ -38,14 +37,37 @@ function Perfil() {
     setUser(res.data);
   }
 
+  async function getProducts() {
+    const res = await requesterService.getProducts();
+    setProducts(res.data);
+  }
+
+  async function getProductIdsOfFavoriteProductsByUserId() {
+    const res = await requesterService.getProductIdsOfFavoriteProductsByUserId(
+      userId
+    );
+    setIdOfFavoriteProducts(res.data);
+    console.log(res.data);
+  }
+
+  async function favorite(id) {
+    const idToDelete =
+      await requesterService.getIdFavoriteProductByProductIdAndUserId(
+        id,
+        userId
+      );
+
+    await requesterService.deleteFavortiteProduct(idToDelete.data);
+
+    getProducts();
+    getProductIdsOfFavoriteProductsByUserId();
+  }
+
   useEffect(() => {
     getUserData();
+    getProducts();
+    getProductIdsOfFavoriteProductsByUserId();
   }, []);
-
-  function favorite(id) {
-    setFilled(!filled);
-    setSelectedProduct(id);
-  }
 
   function selectFavoritePage() {
     setShowProducts(true);
@@ -100,30 +122,32 @@ function Perfil() {
                 <h1>Favoritos</h1>
               </Text>
               <ProductsContainer>
-                {Products.map((Product) => (
-                  <ProductBox key={Product.id}>
-                    <ProductCard>
-                      <Image src={Product.src} />
-                      <InternalContainer>
-                        <Text Weight="700" Size="15px">
-                          {Product.name}
-                        </Text>
-                        <Text Weight="600" Size="12px">
-                          R${Product.price}
-                        </Text>
-                        <Button
-                          Hover="#FDE49C"
-                          onClick={() => favorite(Product.id)}
-                        >
-                          {filled && selectedProduct === Product.id ? (
-                            <HeartFilled />
-                          ) : (
-                            <HeartOutlined />
-                          )}
-                        </Button>
-                      </InternalContainer>
-                    </ProductCard>
-                  </ProductBox>
+                {products.map((Product) => (
+                  <>
+                    {idsOfFavoriteProducts.includes(Product.id) ? (
+                      <ProductBox key={Product.id}>
+                        <ProductCard>
+                          <Image src={Product.src} />
+                          <InternalContainer>
+                            <Text Weight="700" Size="15px">
+                              {Product.name}
+                            </Text>
+                            <Text Weight="600" Size="12px">
+                              R${Product.price}
+                            </Text>
+                            <Button
+                              Hover="#FDE49C"
+                              onClick={() => favorite(Product.id)}
+                            >
+                              <HeartFilled />
+                            </Button>
+                          </InternalContainer>
+                        </ProductCard>
+                      </ProductBox>
+                    ) : (
+                      <></>
+                    )}
+                  </>
                 ))}
               </ProductsContainer>
             </>
