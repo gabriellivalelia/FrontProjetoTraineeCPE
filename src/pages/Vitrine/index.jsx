@@ -7,28 +7,74 @@ import {
   Text,
   Button,
   ProductBox,
+  NotLoggedContainerIn,
 } from "./styles";
-import { Products } from "./products";
+
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import * as requesterService from "../../services/Requester/requesterService";
+import NotLoggedIn from "../../components/NotLoggedIn";
 
 function Vitrine() {
-  const [Filled, SetFilled] = useState(false);
-  const [SelectedProduct, SetSelectedProduct] = useState("0");
+  const [products, setProducts] = useState([]);
+  const [idsOfFavoriteProducts, setIdOfFavoriteProducts] = useState([]);
+  const token = localStorage.getItem("tokenAcess");
+  const authenticated =
+    token !== null && token !== "undefined" && token !== "" ? true : false;
 
-  function Favorite(id) {
-    SetFilled(!Filled);
-    SetSelectedProduct(id);
+  const userId = localStorage.getItem("tokenAcess");
+
+  async function favorite(id) {
+    if (idsOfFavoriteProducts.includes(id)) {
+      const idToDelete =
+        await requesterService.getIdFavoriteProductByProductIdAndUserId(
+          id,
+          userId
+        );
+
+      await requesterService.deleteFavortiteProduct(idToDelete.data);
+    } else {
+      const favoriteProduct = {
+        userId: userId,
+        productId: id,
+      };
+      await requesterService.createFavoriteProduct(favoriteProduct);
+    }
+
+    getProducts();
+    getProductIdsOfFavoriteProductsByUserId();
   }
 
+  async function getProducts() {
+    const res = await requesterService.getProducts();
+    setProducts(res.data);
+  }
 
-  return (
+  async function getProductIdsOfFavoriteProductsByUserId() {
+    const res = await requesterService.getProductIdsOfFavoriteProductsByUserId(
+      userId
+    );
+    setIdOfFavoriteProducts(res.data);
+  }
+
+  useEffect(() => {
+    getProducts();
+    getProductIdsOfFavoriteProductsByUserId();
+  }, []);
+
+  return !authenticated ? (
+    <React.StrictMode>
+      <NotLoggedContainerIn>
+        <NotLoggedIn />
+      </NotLoggedContainerIn>
+    </React.StrictMode>
+  ) : (
     <React.StrictMode>
       <Container>
-        {Products.map((Product) => (
+        {products.map((Product) => (
           <ProductBox key={Product.id}>
             <ProductCard>
-              <Image src={Product.src} />
+              <Image src={Product.image} />
               <InternalContainer>
                 <Text Weight="700" Size="15px">
                   {Product.name}
@@ -36,8 +82,8 @@ function Vitrine() {
                 <Text Weight="600" Size="12px">
                   R${Product.price}
                 </Text>
-                <Button onClick={()=>Favorite(Product.id)}>
-                  {Filled && SelectedProduct === Product.id ? (
+                <Button onClick={() => favorite(Product.id)}>
+                  {idsOfFavoriteProducts.includes(Product.id) ? (
                     <HeartFilled />
                   ) : (
                     <HeartOutlined />

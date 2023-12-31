@@ -9,115 +9,188 @@ import {
   Button,
   Message,
   ButtonContainer,
-  StyledPhoneInput
+  StyledPhoneInput,
+  LoaderBox,
 } from "./styles";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-const EditUserFormSchema = z.object({
-  nome: z
-    .string()
-    .nonempty("Esse campo é obrigatório!")
-    .regex(/[a-zA-ZÀ-ÿ\s]+/, "Digite apenas letras e acentos!")
-    .transform((nome) => {
-      return nome
-        .trim()
-        .split(" ")
-        .map((word) => {
-          return word[0].toLocaleUpperCase().concat(word.substring(1));
-        })
-        .join(" ");
-    }),
-  telefone: z
-    .string()
-    .nonempty("Esse campo é obrigatório!")
-    .regex(
-      /^(\(?\d{2}\)?\s?)(\d{4,5}-?\d{4})$/,
-      "Insira um telefone no formato (XX) XXXXX-XXXX!"
-    ),
-  endereço: z.string().nonempty("Esse campo é obrigatório!"),
-});
+import * as requesterService from "../../services/Requester/requesterService";
+import { useEffect } from "react";
+import { useState } from "react";
+import NotLoggedIn from "../../components/NotLoggedIn";
+import { LoadingOutlined } from "@ant-design/icons";
 
 function EditarPerfil() {
+  const editUserFormSchema = z
+    .object({
+      name: z
+        .string()
+        .optional()
+        .refine((value) => value === "" || /[a-zA-ZÀ-ÿ\s]+/.test(value), {
+          message: "Digite apenas letras e acentos!",
+        })
+        .refine((value) => value === "" || value.trim() !== "", {
+          message: "Insira um nome válido!",
+        })
+        .transform((name) => {
+          if (name.trim() !== "") {
+            return name
+              .trim()
+              .split(" ")
+              .map((word) => {
+                return word[0].toLocaleUpperCase().concat(word.substring(1));
+              })
+              .join(" ");
+          }
+
+          return "";
+        }),
+      phone: z
+        .string()
+        .optional()
+        .refine(
+          (value) =>
+            value === "" || /^(\(?\d{2}\)?\s?)(\d{4,5}-?\d{4})$/.test(value),
+          {
+            message: "Insira um telefone no formato (XX) XXXXX-XXXX!",
+          }
+        ),
+      address: z
+        .string()
+        .optional()
+        .refine((value) => value === "" || value.trim() !== "", {
+          message: "Insira um endereço válido!",
+        }),
+    })
+    .refine((data) => data.name || data.phone || data.address, {
+      path: ["address"],
+      message: "Preencha pelo menos um campo!",
+    });
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(EditUserFormSchema),
+    resolver: zodResolver(editUserFormSchema),
   });
 
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
 
-  function EditUser(data) {
-    console.log(data);
-    Navigate("/");
+  const userId = localStorage.getItem("tokenAcess");
+  const token = localStorage.getItem("tokenAcess");
+  const authenticated =
+    token !== null && token !== "undefined" && token !== "" ? true : false;
+  const [loading, setLoading] = useState(false);
+  let [user, setUser] = useState({});
+
+  async function getUserData() {
+    const res = await requesterService.getUserById(userId);
+    setUser(res.data);
   }
 
-  function Redirection(data) {
-    console.log(data);
-    Navigate("/Perfil");
+  useEffect(() => {
+    getUserData();
+  }, []);
+
+  async function editUser(userData) {
+    setLoading(true);
+    userData.id = userId;
+
+    //retira os campos que não foram preenchidos
+    const cleanedData = Object.keys(userData).reduce((acc, key) => {
+      if (userData[key] !== "") {
+        acc[key] = userData[key];
+      }
+      return acc;
+    }, {});
+
+    try {
+      await requesterService.updateUser(cleanedData);
+      alert("Dados alterados com sucesso!");
+      navigate("/Perfil");
+    } catch (error) {
+      console.error(error);
+    }
+
+    setLoading(false);
   }
 
-  return (
+  function redirection() {
+    navigate("/Perfil");
+  }
+
+  return !authenticated ? (
+    <React.StrictMode>
+      <Container>
+        <NotLoggedIn />
+      </Container>
+    </React.StrictMode>
+  ) : (
     <React.StrictMode>
       <Container>
         <FormContainer>
           <div>
             <h1>Editar Perfil</h1>
           </div>
-          <Form onSubmit={handleSubmit(EditUser)} onReset={Redirection}>
+          <Form onSubmit={handleSubmit(editUser)} onReset={redirection}>
             <InputContainer>
-              <label htmlFor="nome">Nome Completo:</label>
+              <label htmlFor="name">Nome Completo:</label>
               <Input
                 type="text"
-                id="nome"
-                placeholder="Nome Completo"
-                {...register("nome")}
+                id="name"
+                placeholder={user?.name || "Nome Completo"}
+                {...register("name")}
                 autoComplete="off"
               />
-              {errors.nome && <Message>{errors.nome.message}</Message>}
+              {errors.name && <Message>{errors.name.message}</Message>}
             </InputContainer>
             <InputContainer>
-              <label htmlFor="telefone">Telefone:</label>
+              <label htmlFor="phone">Telefone:</label>
               <StyledPhoneInput
                 mask="(99) 99999-9999"
-                id="telefone"
-                placeholder="Telefone"
-                {...register("telefone")}
+                id="phone"
+                placeholder={user?.phone || "Telefone"}
+                {...register("phone")}
                 autoComplete="off"
               />
-              {errors.telefone && <Message>{errors.telefone.message}</Message>}
+              {errors.phone && <Message>{errors.phone.message}</Message>}
             </InputContainer>
             <InputContainer>
-              <label htmlFor="endereço">Endereço:</label>
+              <label htmlFor="address">Endereço:</label>
               <Input
                 type="text"
-                id="endereço"
-                placeholder="Endereço"
-                {...register("endereço")}
+                id="address"
+                placeholder={user?.address || "Endereço"}
+                {...register("address")}
                 autoComplete="off"
               />
-              {errors.endereço && <Message>{errors.endereço.message}</Message>}
+              {errors.address && <Message>{errors.address.message}</Message>}
             </InputContainer>
             <ButtonContainer>
-              <Button 
-               type="reset" 
-               value="Cancelar"
-               Background="white"
-               Color="red"
-               BorderColor ="red"
-               Hover="#64C9CF"
-               />
-              <Button 
-               type="submit" 
-               value="Salvar"
-               Background="#FFA40D"
-               Color="white"
-               BorderColor ="white"
-               Hover="#CE860F"
-               />
+              <Button
+                type="reset"
+                value="Cancelar"
+                Background="white"
+                Color="red"
+                BorderColor="red"
+                Hover="#64C9CF"
+              />
+              {loading ? (
+                <LoaderBox>
+                  <LoadingOutlined spin />
+                </LoaderBox>
+              ) : (
+                <Button
+                  type="submit"
+                  value="Salvar"
+                  Background="#FFA40D"
+                  Color="white"
+                  BorderColor="white"
+                  Hover="#CE860F"
+                />
+              )}
             </ButtonContainer>
           </Form>
         </FormContainer>

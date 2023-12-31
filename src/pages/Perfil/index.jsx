@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Container,
   ButtonsContainer,
@@ -16,35 +16,96 @@ import {
   DataInternalContainer,
   DataInternalBox,
   ButtonBox,
+  NotLoggedContainerIn,
 } from "./styles";
 
-import { Products } from "../Vitrine/products";
-import { HeartOutlined, HeartFilled } from "@ant-design/icons";
+import { HeartFilled, LoadingOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import * as requesterService from "../../services/Requester/requesterService";
+import NotLoggedIn from "../../components/NotLoggedIn";
 
 function Perfil() {
-  const [Filled, SetFilled] = useState(false);
-  const [SelectedProduct, SetSelectedProduct] = useState("0");
-  const [ShowProducts, SetShowProducts] = useState(true);
-  const [ShowData, SetShowData] = useState(false);
-  const Navigate = useNavigate();
+  const [products, setProducts] = useState([]);
+  const [idsOfFavoriteProducts, setIdOfFavoriteProducts] = useState([]);
+  const [showProducts, setShowProducts] = useState(true);
+  const [showData, setShowData] = useState(false);
+  const token = localStorage.getItem("tokenAcess");
+  const authenticated =
+    token !== null && token !== "undefined" && token !== "" ? true : false;
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  function Favorite(id) {
-    SetFilled(!Filled);
-    SetSelectedProduct(id);
+  const userId = localStorage.getItem("tokenAcess");
+  let [user, setUser] = useState({});
+
+  async function getUserData() {
+    const res = await requesterService.getUserById(userId);
+    setUser(res.data);
   }
 
-  function SelectFavoritePage() {
-    SetShowProducts(true);
-    SetShowData(false);
+  async function getProducts() {
+    const res = await requesterService.getProducts();
+    setProducts(res.data);
   }
 
-  function SelectDataPage() {
-    SetShowProducts(false);
-    SetShowData(true);
+  async function getProductIdsOfFavoriteProductsByUserId() {
+    const res = await requesterService.getProductIdsOfFavoriteProductsByUserId(
+      userId
+    );
+    setIdOfFavoriteProducts(res.data);
   }
 
-  return (
+  async function favorite(id) {
+    const idToDelete =
+      await requesterService.getIdFavoriteProductByProductIdAndUserId(
+        id,
+        userId
+      );
+
+    await requesterService.deleteFavortiteProduct(idToDelete.data);
+
+    getProducts();
+    getProductIdsOfFavoriteProductsByUserId();
+  }
+
+  useEffect(() => {
+    getUserData();
+    getProducts();
+    getProductIdsOfFavoriteProductsByUserId();
+  }, []);
+
+  function selectFavoritePage() {
+    setShowProducts(true);
+    setShowData(false);
+  }
+
+  function selectDataPage() {
+    setShowProducts(false);
+    setShowData(true);
+  }
+
+  async function deleteUser() {
+    localStorage.removeItem("tokenAcess");
+    await requesterService.deleteUser(userId);
+    alert("Conta deletada com sucesso!");
+    navigate("/Login");
+  }
+
+  function logOut() {
+    setLoading(true);
+    localStorage.removeItem("tokenAcess");
+    alert("Logout realizado com sucesso!");
+    navigate("/Login");
+    setLoading(false);
+  }
+
+  return !authenticated ? (
+    <React.StrictMode>
+      <NotLoggedContainerIn>
+        <NotLoggedIn />
+      </NotLoggedContainerIn>
+    </React.StrictMode>
+  ) : (
     <React.StrictMode>
       <Container>
         <ButtonsContainer>
@@ -57,16 +118,16 @@ function Perfil() {
               Background="rgba(100, 201, 207, 0.25);"
               Border="0"
               Color="#11223D"
-              onClick={SelectFavoritePage}
+              onClick={selectFavoritePage}
             >
               Favoritos
             </Button>
-            <Button 
-            Radius="0"
-            Background="white"
-            Border="0" 
-            Color="#11223D"
-            onClick={SelectDataPage}
+            <Button
+              Radius="0"
+              Background="white"
+              Border="0"
+              Color="#11223D"
+              onClick={selectDataPage}
             >
               Detalhes do Perfil
             </Button>
@@ -75,44 +136,50 @@ function Perfil() {
               Background="rgba(100, 201, 207, 0.25);"
               Border="0"
               Color="red"
+              onClick={logOut}
             >
-              Sair
+              {loading ? <LoadingOutlined spin /> : <>Sair</>}
             </Button>
           </ButtonsBox>
         </ButtonsContainer>
         <RightContainer>
-          {ShowProducts && (
+          {showProducts && (
             <>
               <Text Color="#11223D">
                 <h1>Favoritos</h1>
               </Text>
               <ProductsContainer>
-                {Products.map((Product) => (
-                  <ProductBox key={Product.id}>
-                    <ProductCard>
-                      <Image src={Product.src} />
-                      <InternalContainer>
-                        <Text Weight="700" Size="15px">
-                          {Product.name}
-                        </Text>
-                        <Text Weight="600" Size="12px">
-                          R${Product.price}
-                        </Text>
-                        <Button Hover = "#FDE49C" onClick={() => Favorite(Product.id)}>
-                          {Filled && SelectedProduct === Product.id ? (
-                            <HeartFilled />
-                          ) : (
-                            <HeartOutlined />
-                          )}
-                        </Button>
-                      </InternalContainer>
-                    </ProductCard>
-                  </ProductBox>
+                {products.map((Product) => (
+                  <>
+                    {idsOfFavoriteProducts.includes(Product.id) ? (
+                      <ProductBox key={Product.id}>
+                        <ProductCard>
+                          <Image src={Product.image} />
+                          <InternalContainer>
+                            <Text Weight="700" Size="15px">
+                              {Product.name}
+                            </Text>
+                            <Text Weight="600" Size="12px">
+                              R${Product.price}
+                            </Text>
+                            <Button
+                              Hover="#FDE49C"
+                              onClick={() => favorite(Product.id)}
+                            >
+                              <HeartFilled />
+                            </Button>
+                          </InternalContainer>
+                        </ProductCard>
+                      </ProductBox>
+                    ) : (
+                      <></>
+                    )}
+                  </>
                 ))}
               </ProductsContainer>
             </>
           )}
-          {ShowData && (
+          {showData && (
             <>
               <Text Color="#11223D">
                 <h1>Detalhes do Perfil</h1>
@@ -121,19 +188,19 @@ function Perfil() {
                 <DataInternalContainer>
                   <DataInternalBox>
                     <Text Weight="bold">Nome Completo:</Text>
-                    <Text>Gabrielli Valelia Sousa da Silva</Text>
+                    <Text>{user?.name || ""}</Text>
                   </DataInternalBox>
                   <DataInternalBox>
                     <Text Weight="bold">Email:</Text>
-                    <Text>gabriellisilva1102@gmail.com</Text>
+                    <Text>{user?.email || ""}</Text>
                   </DataInternalBox>
                   <DataInternalBox>
                     <Text Weight="bold">Telefone:</Text>
-                    <Text>(28) 99934-8537</Text>
+                    <Text>{user?.phone || ""}</Text>
                   </DataInternalBox>
                   <DataInternalBox>
                     <Text Weight="bold">Endereço:</Text>
-                    <Text>Rua Zilah Corrêa de Araújo, 345</Text>
+                    <Text>{user?.address || ""}</Text>
                   </DataInternalBox>
                 </DataInternalContainer>
                 <ButtonBox>
@@ -142,15 +209,16 @@ function Perfil() {
                     Background="white"
                     Color="red"
                     BorderColor="red"
+                    onClick={() => deleteUser()}
                   >
-                    Deletar Conta
+                    {loading ? <LoadingOutlined spin /> : <>Deletar Conta</>}
                   </Button>
                   <Button
                     Width="20%"
                     Background="#FFADC1FA"
                     Color="white"
                     BorderColor="#FFADC1FA"
-                    onClick={()=> Navigate("/EditarPerfil")}
+                    onClick={() => navigate("/EditarPerfil")}
                   >
                     Editar Dados
                   </Button>
