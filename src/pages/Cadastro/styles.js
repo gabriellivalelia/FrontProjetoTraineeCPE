@@ -1,8 +1,8 @@
-import styled from 'styled-components';
-import InputMask from 'react-input-mask';
+import styled from "styled-components";
+import InputMask from "react-input-mask";
 
 export const Container = styled.div`
-  flex:1;
+  flex: 1;
 
   display: flex;
   justify-content: center;
@@ -13,8 +13,8 @@ export const Container = styled.div`
 export const FormContainer = styled.div`
   width: 35%;
   height: 100%;
-  background: #EFB8C4;
-  padding: 2% 2% 2% 2% ;
+  background: #efb8c4;
+  padding: 2% 2% 2% 2%;
 
   display: flex;
   flex-direction: column;
@@ -22,74 +22,95 @@ export const FormContainer = styled.div`
   align-items: center;
   border-radius: 0.625rem;
 
-  @media(max-width:1200px){
-    width:50%;
+  @media (max-width: 1200px) {
+    width: 50%;
   }
 
-  @media(max-width:560px){
-    width:75%;
+  @media (max-width: 560px) {
+    width: 75%;
   }
 `;
 
 export const Form = styled.form`
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   gap: 0.8rem;
-   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  width: 100%;
 `;
 
 export const InputContainer = styled.div`
-   display: flex;
-   flex-direction: column;
-   text-align: left;
-   font-size: 14px;
-   width: 100%;
-   gap: 5px;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  font-size: 14px;
+  width: 100%;
+  gap: 5px;
 `;
 
 export const Input = styled.input`
-   width: 100%;
-   height: 32px;
-   padding: 2%;
-   box-sizing: border-box;
-   border-radius: 0.25rem;
-   border: none;
-
+  width: 100%;
+  height: 32px;
+  padding: 2%;
+  box-sizing: border-box;
+  border-radius: 0.25rem;
+  border: none;
 `;
 
 export const Button = styled.input`
-   width: 50%;
-   min-width: 120px;
-   height: 32px;
-   background: #FFA40D;
-   color: white;
-   border: solid 1px ;
-   border-color: white;
-   border-radius: 0.625rem;
-   margin-top: 2%;
-   
-   &:hover {
-    background-color: #CE860F ;
-   }
+  width: 50%;
+  min-width: 120px;
+  height: 32px;
+  background: #ffa40d;
+  color: white;
+  border: solid 1px;
+  border-color: white;
+  border-radius: 0.625rem;
+  margin-top: 2%;
+
+  &:hover {
+    background-color: #ce860f;
+  }
+`;
+
+export const LoaderBox = styled.div`
+  width: 50%;
+  min-width: 120px;
+  height: 32px;
+  background: #ffa40d;
+  color: white;
+  border: solid 1px;
+  border-color: white;
+  border-radius: 0.625rem;
+  margin-top: 2%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 export const Message = styled.div`
-   width: 100%;
-   color: red;
-   font-size: 12px;
+  width: 100%;
+  color: red;
+  font-size: 12px;
 `;
 
 export const StyledPhoneInput = styled(InputMask)`
-   width: 100%;
-   height: 32px;
-   padding: 2%;
-   box-sizing: border-box;
-   border-radius: 0.25rem;
-   border: none;
+  width: 100%;
+  height: 32px;
+  padding: 2%;
+  box-sizing: border-box;
+  border-radius: 0.25rem;
+  border: none;
 `;
 
+export const TextButton = styled.button`
+  padding-top: 2%;
+  background: transparent;
+  border: none;
+  text-decoration: underline;
 
-
-
-
+  &:hover {
+    font-weight: bold;
+  }
+`;

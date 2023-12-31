@@ -7,17 +7,22 @@ import {
   Text,
   Button,
   ProductBox,
+  NotLoggedContainerIn,
 } from "./styles";
 
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import * as requesterService from "../../services/Requester/requesterService";
+import NotLoggedIn from "../../components/NotLoggedIn";
 
 function Vitrine() {
   const [products, setProducts] = useState([]);
   const [idsOfFavoriteProducts, setIdOfFavoriteProducts] = useState([]);
+  const token = localStorage.getItem("tokenAcess");
+  const authenticated =
+    token !== null && token !== "undefined" && token !== "" ? true : false;
 
-  const userId = "3955b535-a8cf-4ebe-ae70-d7f618695009";
+  const userId = localStorage.getItem("tokenAcess");
 
   async function favorite(id) {
     if (idsOfFavoriteProducts.includes(id)) {
@@ -50,7 +55,6 @@ function Vitrine() {
       userId
     );
     setIdOfFavoriteProducts(res.data);
-    console.log(res.data);
   }
 
   useEffect(() => {
@@ -58,13 +62,19 @@ function Vitrine() {
     getProductIdsOfFavoriteProductsByUserId();
   }, []);
 
-  return (
+  return !authenticated ? (
+    <React.StrictMode>
+      <NotLoggedContainerIn>
+        <NotLoggedIn />
+      </NotLoggedContainerIn>
+    </React.StrictMode>
+  ) : (
     <React.StrictMode>
       <Container>
         {products.map((Product) => (
           <ProductBox key={Product.id}>
             <ProductCard>
-              <Image src={Product.src} />
+              <Image src={Product.image} />
               <InternalContainer>
                 <Text Weight="700" Size="15px">
                   {Product.name}

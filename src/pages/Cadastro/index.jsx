@@ -9,13 +9,16 @@ import {
   Button,
   Message,
   StyledPhoneInput,
+  LoaderBox,
+  TextButton,
 } from "./styles";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as requesterService from "../../services/Requester/requesterService";
-//import { LoadingOutlined } from "@ant-design/icons";
-//import { useState } from "react";
+import { useState } from "react";
+import { LoadingOutlined } from "@ant-design/icons";
+import Logged from "../../components/Logged";
 
 function Cadastro() {
   const CreateUserFormSchema = z
@@ -69,24 +72,43 @@ function Cadastro() {
   });
 
   const navigate = useNavigate();
-
-  //const [loading, setLoading] = useState(true);
+  const token = localStorage.getItem("tokenAcess");
+  const authenticated =
+    token !== null && token !== "undefined" && token !== "" ? true : false;
+  const [loading, setLoading] = useState(false);
+  const [registerError, setRegisterError] = useState("");
 
   async function createUser(userData) {
-    console.log({ userData });
-   // setLoading(true);
+    setLoading(true);
 
     try {
-      const { data } = await requesterService.createUser(userData);
+      await requesterService.createUser(userData);
+      const res = await requesterService.logIn({
+        email: userData.email,
+        password: userData.password,
+      });
+      localStorage.setItem("tokenAcess", res?.data?.tokenAcess);
       navigate("/");
-      console.log({ data });
     } catch (error) {
-      console.error(error);
-     // setLoading(false);
+      console.error(
+        "Erro ao criar usuário:",
+        error?.response?.data?.message || "Erro ao criar usuário."
+      );
+      setRegisterError(
+        error?.response?.data?.message || "Erro ao criar usuário."
+      );
     }
+
+    setLoading(false);
   }
 
-  return (
+  return authenticated ? (
+    <React.StrictMode>
+      <Container>
+        <Logged />
+      </Container>
+    </React.StrictMode>
+  ) : (
     <React.StrictMode>
       <Container>
         <FormContainer>
@@ -163,13 +185,18 @@ function Cadastro() {
                 <Message>{errors.confirmedPassword.message}</Message>
               )}
             </InputContainer>
-            {/* {loading ? (
-              <LoadingOutlined spin />
+            <Message>{registerError}</Message>
+            {loading ? (
+              <LoaderBox>
+                <LoadingOutlined spin />
+              </LoaderBox>
             ) : (
               <Button type="submit" value="Finalizar Cadastro" />
-            )} */}
-             <Button type="submit" value="Finalizar Cadastro"/>
+            )}
           </Form>
+          <TextButton onClick={() => navigate("/Login")}>
+            Já tenho cadastro
+          </TextButton>
         </FormContainer>
       </Container>
     </React.StrictMode>

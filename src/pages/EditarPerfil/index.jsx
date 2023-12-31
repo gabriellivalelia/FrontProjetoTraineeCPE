@@ -10,6 +10,7 @@ import {
   Message,
   ButtonContainer,
   StyledPhoneInput,
+  LoaderBox,
 } from "./styles";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -17,6 +18,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as requesterService from "../../services/Requester/requesterService";
 import { useEffect } from "react";
 import { useState } from "react";
+import NotLoggedIn from "../../components/NotLoggedIn";
+import { LoadingOutlined } from "@ant-design/icons";
 
 function EditarPerfil() {
   const editUserFormSchema = z
@@ -75,7 +78,11 @@ function EditarPerfil() {
 
   const navigate = useNavigate();
 
-  const userId = "efa348fb-ac4c-4dd0-b018-7ecab2178de7";
+  const userId = localStorage.getItem("tokenAcess");
+  const token = localStorage.getItem("tokenAcess");
+  const authenticated =
+    token !== null && token !== "undefined" && token !== "" ? true : false;
+  const [loading, setLoading] = useState(false);
   let [user, setUser] = useState({});
 
   async function getUserData() {
@@ -88,7 +95,8 @@ function EditarPerfil() {
   }, []);
 
   async function editUser(userData) {
-    userData.id = "efa348fb-ac4c-4dd0-b018-7ecab2178de7";
+    setLoading(true);
+    userData.id = userId;
 
     //retira os campos que não foram preenchidos
     const cleanedData = Object.keys(userData).reduce((acc, key) => {
@@ -100,18 +108,26 @@ function EditarPerfil() {
 
     try {
       await requesterService.updateUser(cleanedData);
+      alert("Dados alterados com sucesso!");
       navigate("/Perfil");
     } catch (error) {
       console.error(error);
     }
+
+    setLoading(false);
   }
 
-  function redirection(data) {
-    console.log(data);
+  function redirection() {
     navigate("/Perfil");
   }
 
-  return (
+  return !authenticated ? (
+    <React.StrictMode>
+      <Container>
+        <NotLoggedIn />
+      </Container>
+    </React.StrictMode>
+  ) : (
     <React.StrictMode>
       <Container>
         <FormContainer>
@@ -161,14 +177,20 @@ function EditarPerfil() {
                 BorderColor="red"
                 Hover="#64C9CF"
               />
-              <Button
-                type="submit"
-                value="Salvar"
-                Background="#FFA40D"
-                Color="white"
-                BorderColor="white"
-                Hover="#CE860F"
-              />
+              {loading ? (
+                <LoaderBox>
+                  <LoadingOutlined spin />
+                </LoaderBox>
+              ) : (
+                <Button
+                  type="submit"
+                  value="Salvar"
+                  Background="#FFA40D"
+                  Color="white"
+                  BorderColor="white"
+                  Hover="#CE860F"
+                />
+              )}
             </ButtonContainer>
           </Form>
         </FormContainer>

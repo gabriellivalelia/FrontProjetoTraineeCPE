@@ -16,20 +16,26 @@ import {
   DataInternalContainer,
   DataInternalBox,
   ButtonBox,
+  NotLoggedContainerIn,
 } from "./styles";
 
-import { HeartFilled } from "@ant-design/icons";
+import { HeartFilled, LoadingOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import * as requesterService from "../../services/Requester/requesterService";
+import NotLoggedIn from "../../components/NotLoggedIn";
 
 function Perfil() {
   const [products, setProducts] = useState([]);
   const [idsOfFavoriteProducts, setIdOfFavoriteProducts] = useState([]);
   const [showProducts, setShowProducts] = useState(true);
   const [showData, setShowData] = useState(false);
+  const token = localStorage.getItem("tokenAcess");
+  const authenticated =
+    token !== null && token !== "undefined" && token !== "" ? true : false;
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const userId = "3955b535-a8cf-4ebe-ae70-d7f618695009";
+  const userId = localStorage.getItem("tokenAcess");
   let [user, setUser] = useState({});
 
   async function getUserData() {
@@ -47,7 +53,6 @@ function Perfil() {
       userId
     );
     setIdOfFavoriteProducts(res.data);
-    console.log(res.data);
   }
 
   async function favorite(id) {
@@ -79,7 +84,28 @@ function Perfil() {
     setShowData(true);
   }
 
-  return (
+  async function deleteUser() {
+    localStorage.removeItem("tokenAcess");
+    await requesterService.deleteUser(userId);
+    alert("Conta deletada com sucesso!");
+    navigate("/Login");
+  }
+
+  function logOut() {
+    setLoading(true);
+    localStorage.removeItem("tokenAcess");
+    alert("Logout realizado com sucesso!");
+    navigate("/Login");
+    setLoading(false);
+  }
+
+  return !authenticated ? (
+    <React.StrictMode>
+      <NotLoggedContainerIn>
+        <NotLoggedIn />
+      </NotLoggedContainerIn>
+    </React.StrictMode>
+  ) : (
     <React.StrictMode>
       <Container>
         <ButtonsContainer>
@@ -110,8 +136,9 @@ function Perfil() {
               Background="rgba(100, 201, 207, 0.25);"
               Border="0"
               Color="red"
+              onClick={logOut}
             >
-              Sair
+              {loading ? <LoadingOutlined spin /> : <>Sair</>}
             </Button>
           </ButtonsBox>
         </ButtonsContainer>
@@ -127,7 +154,7 @@ function Perfil() {
                     {idsOfFavoriteProducts.includes(Product.id) ? (
                       <ProductBox key={Product.id}>
                         <ProductCard>
-                          <Image src={Product.src} />
+                          <Image src={Product.image} />
                           <InternalContainer>
                             <Text Weight="700" Size="15px">
                               {Product.name}
@@ -182,8 +209,9 @@ function Perfil() {
                     Background="white"
                     Color="red"
                     BorderColor="red"
+                    onClick={() => deleteUser()}
                   >
-                    Deletar Conta
+                    {loading ? <LoadingOutlined spin /> : <>Deletar Conta</>}
                   </Button>
                   <Button
                     Width="20%"

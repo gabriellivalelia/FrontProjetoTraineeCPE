@@ -9,11 +9,16 @@ import {
   SubmitButton,
   ButtonContainer,
   Button,
+  LoaderBox,
 } from "./styles";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
+import * as requesterService from "../../services/Requester/requesterService";
+import { LoadingOutlined } from "@ant-design/icons";
+import Logged from "../../components/Logged";
+import { useState } from "react";
 
 const LoginFormSchema = z.object({
   email: z
@@ -21,15 +26,19 @@ const LoginFormSchema = z.object({
     .nonempty("Esse campo é obrigatório!")
     .email("Formato de email inválido!")
     .toLowerCase(),
-  senha: z
+  password: z
     .string()
     .nonempty("Esse campo é obrigatório!")
     .min(6, "A senha tem no mínimo 6 caracteres!"),
 });
 
 function Login() {
-
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
+  const token = localStorage.getItem("tokenAcess");
+  const authenticated =
+    token !== null && token !== "undefined" && token !== "" ? true : false;
+  const [loading, setLoading] = useState(false);
+  const [loginError, setLoginError] = useState("");
 
   const {
     register,
@@ -39,11 +48,31 @@ function Login() {
     resolver: zodResolver(LoginFormSchema),
   });
 
-  function Login(data) {
-    console.log(data);
+  async function Login(data) {
+    setLoading(true);
+
+    try {
+      const res = await requesterService.logIn(data);
+      localStorage.setItem("tokenAcess", res?.data?.tokenAcess);
+      navigate("/");
+    } catch (error) {
+      console.error(
+        "Erro ao fazer login:",
+        error?.response?.data?.message || "Erro ao fazer Login"
+      );
+      setLoginError(error?.response?.data?.message || "Erro ao fazer Login");
+    }
+
+    setLoading(false);
   }
 
-  return (
+  return authenticated ? (
+    <React.StrictMode>
+      <Container>
+        <Logged />
+      </Container>
+    </React.StrictMode>
+  ) : (
     <React.StrictMode>
       <Container>
         <FormContainer>
@@ -63,21 +92,29 @@ function Login() {
               {errors.email && <Message>{errors.email.message}</Message>}
             </InputContainer>
             <InputContainer>
-              <label htmlFor="senha">Senha:</label>
+              <label htmlFor="password">Senha:</label>
               <Input
                 type="password"
-                id="senha"
+                id="password"
                 placeholder="Senha"
-                {...register("senha")}
+                {...register("password")}
                 autoComplete="off"
               />
-              {errors.senha && <Message>{errors.senha.message}</Message>}
+              {errors.password && <Message>{errors.password.message}</Message>}
             </InputContainer>
-            <SubmitButton type="submit" value="Finalizar Cadastro" />
+            <Message>{loginError}</Message>
+            {loading ? (
+              <LoaderBox>
+                <LoadingOutlined spin />
+              </LoaderBox>
+            ) : (
+              <SubmitButton type="submit" value="Entrar" />
+            )}
           </Form>
           <ButtonContainer>
-            <Button>Esqueci minha senha</Button>
-            <Button onClick={()=> Navigate("/Cadastro")}>Ainda não tenho cadastro</Button>
+            <Button onClick={() => navigate("/Cadastro")}>
+              Ainda não tenho cadastro
+            </Button>
           </ButtonContainer>
         </FormContainer>
       </Container>
