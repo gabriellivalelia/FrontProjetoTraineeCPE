@@ -19,7 +19,7 @@ function Home() {
               <h1>{Texts.title}</h1>
             </Text>
             <Text Weight="normal">
-              <p>{Texts.history}</p>
+              <p style={{ textAlign: "justify" }}>{Texts.history}</p>
             </Text>
             <Text Weight="600">
               <p>{Texts.slogan}</p>
@@ -29,9 +29,11 @@ function Home() {
             <Text Weight="bold">
               <h2>Localização</h2>
             </Text>
-            <EnvironmentOutlined style={{
-              fontSize: "25px",
-            }} />
+            <EnvironmentOutlined
+              style={{
+                fontSize: "25px",
+              }}
+            />
             <Text Weight="normal">
               <p>{Texts.adress}</p>
             </Text>

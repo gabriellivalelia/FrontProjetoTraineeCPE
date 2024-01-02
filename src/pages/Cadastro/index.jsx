@@ -72,9 +72,12 @@ function Cadastro() {
   });
 
   const navigate = useNavigate();
-  const token = localStorage.getItem("tokenAcess");
   const authenticated =
-    token !== null && token !== "undefined" && token !== "" ? true : false;
+    localStorage.getItem("tokenAcess") !== null &&
+    localStorage.getItem("tokenAcess") !== "undefined" &&
+    localStorage.getItem("tokenAcess") !== ""
+      ? true
+      : false;
   const [loading, setLoading] = useState(false);
   const [registerError, setRegisterError] = useState("");
 
@@ -119,7 +122,6 @@ function Cadastro() {
             <InputContainer>
               <label htmlFor="name">Nome Completo:</label>
               <Input
-                type="text"
                 id="name"
                 {...register("name")}
                 autoComplete="off"
@@ -130,7 +132,6 @@ function Cadastro() {
             <InputContainer>
               <label htmlFor="email">Email:</label>
               <Input
-                type="email"
                 id="email"
                 {...register("email")}
                 autoComplete="off"
@@ -141,7 +142,6 @@ function Cadastro() {
             <InputContainer>
               <label htmlFor="phone">Telefone:</label>
               <StyledPhoneInput
-                type="text"
                 id="phone"
                 mask="(99) 99999-9999"
                 {...register("phone")}
@@ -153,7 +153,6 @@ function Cadastro() {
             <InputContainer>
               <label htmlFor="address">Endereço:</label>
               <Input
-                type="text"
                 id="address"
                 {...register("address")}
                 autoComplete="off"

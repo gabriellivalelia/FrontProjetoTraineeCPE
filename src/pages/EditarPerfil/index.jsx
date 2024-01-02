@@ -79,9 +79,12 @@ function EditarPerfil() {
   const navigate = useNavigate();
 
   const userId = localStorage.getItem("tokenAcess");
-  const token = localStorage.getItem("tokenAcess");
   const authenticated =
-    token !== null && token !== "undefined" && token !== "" ? true : false;
+    localStorage.getItem("tokenAcess") !== null &&
+    localStorage.getItem("tokenAcess") !== "undefined" &&
+    localStorage.getItem("tokenAcess") !== ""
+      ? true
+      : false;
   const [loading, setLoading] = useState(false);
   let [user, setUser] = useState({});
 

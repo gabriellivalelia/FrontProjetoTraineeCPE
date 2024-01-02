@@ -29,14 +29,16 @@ function Perfil() {
   const [idsOfFavoriteProducts, setIdOfFavoriteProducts] = useState([]);
   const [showProducts, setShowProducts] = useState(true);
   const [showData, setShowData] = useState(false);
-  const token = localStorage.getItem("tokenAcess");
   const authenticated =
-    token !== null && token !== "undefined" && token !== "" ? true : false;
+    localStorage.getItem("tokenAcess") !== null &&
+    localStorage.getItem("tokenAcess") !== "undefined" &&
+    localStorage.getItem("tokenAcess") !== ""
+      ? true
+      : false;
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
   const userId = localStorage.getItem("tokenAcess");
-  let [user, setUser] = useState({});
+  const [user, setUser] = useState({});
 
   async function getUserData() {
     const res = await requesterService.getUserById(userId);
@@ -68,12 +70,6 @@ function Perfil() {
     getProductIdsOfFavoriteProductsByUserId();
   }
 
-  useEffect(() => {
-    getUserData();
-    getProducts();
-    getProductIdsOfFavoriteProductsByUserId();
-  }, []);
-
   function selectFavoritePage() {
     setShowProducts(true);
     setShowData(false);
@@ -98,6 +94,12 @@ function Perfil() {
     navigate("/Login");
     setLoading(false);
   }
+
+  useEffect(() => {
+    getUserData();
+    getProducts();
+    getProductIdsOfFavoriteProductsByUserId();
+  }, []);
 
   return !authenticated ? (
     <React.StrictMode>

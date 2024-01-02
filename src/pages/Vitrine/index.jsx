@@ -18,10 +18,12 @@ import NotLoggedIn from "../../components/NotLoggedIn";
 function Vitrine() {
   const [products, setProducts] = useState([]);
   const [idsOfFavoriteProducts, setIdOfFavoriteProducts] = useState([]);
-  const token = localStorage.getItem("tokenAcess");
   const authenticated =
-    token !== null && token !== "undefined" && token !== "" ? true : false;
-
+    localStorage.getItem("tokenAcess") !== null &&
+    localStorage.getItem("tokenAcess") !== "undefined" &&
+    localStorage.getItem("tokenAcess") !== ""
+      ? true
+      : false;
   const userId = localStorage.getItem("tokenAcess");
 
   async function favorite(id) {
