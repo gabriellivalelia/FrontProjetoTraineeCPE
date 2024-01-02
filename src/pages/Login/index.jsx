@@ -34,9 +34,13 @@ const LoginFormSchema = z.object({
 
 function Login() {
   const navigate = useNavigate();
-  const token = localStorage.getItem("tokenAcess");
+
   const authenticated =
-    token !== null && token !== "undefined" && token !== "" ? true : false;
+    localStorage.getItem("tokenAcess") !== null &&
+    localStorage.getItem("tokenAcess") !== "undefined" &&
+    localStorage.getItem("tokenAcess") !== ""
+      ? true
+      : false;
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState("");
 
@@ -83,7 +87,6 @@ function Login() {
             <InputContainer>
               <label htmlFor="email">Email:</label>
               <Input
-                type="email"
                 id="email"
                 placeholder="Email"
                 {...register("email")}
